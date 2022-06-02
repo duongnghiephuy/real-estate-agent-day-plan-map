@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "remapbe.apps.RemapbeConfig",
+    "remapfe",
 ]
 
 MIDDLEWARE = [
