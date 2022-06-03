@@ -1,6 +1,6 @@
 import React, { useState, useId } from 'react';
 import ReactDOM from 'react-dom/client';
-
+import { useForm } from "react-hook-form";
 
 function FileInput(props) {
 
@@ -10,7 +10,7 @@ function FileInput(props) {
     return (<div class="file-input">
         <label>
             Upload File:
-            <input type="file" onChange={handleChange} onClick={(e) => (e.target.value = null)}></input>
+            <input type="file" onChange={handleChange} onClick={(e) => (e.target.value = null)} />
         </label>
     </div>);
 }
@@ -19,41 +19,27 @@ function FileInput(props) {
 
 function SearchInput(props) {
     const id = useId();
-    const [center, setCenter] = useState("");
-    const [unit, setUnit] = useState("1");
-    const [maxDistance, setMaxDistance] = useState("km");
-    const [addressColumn, setAddressColumn] = useState("");
+
     const columns = props.columns;
 
-    function handleUnitChange(event) {
-        setUnit(event.target.value);
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+
+
+
+    function onSubmit(data) {
+        console.log(data);
     }
 
-    function handleMaxDistanceChange(event) {
-        setMaxDistance(event.target.value);
-    }
-
-    function handleColumnChange(event) {
-        setAddressColumn(event.target.value);
-    }
-
-    function handleCenter(event) {
-        setCenter(event.target.value);
-    }
-    function handleSubmit(event) {
-        event.preventDefault();
-
-    }
-
-    return (<form class="search-input" onSubmit={handleSubmit}>
+    return (<form class="search-input" onSubmit={handleSubmit(onSubmit)}>
         <label>
             Center Address:
-            <input type="text" value={center} name="center-address" onChange={handleCenter} placeholder="Center Address">  </input>
+            <input type="text" name="center" placeholder="Center Address" {...register("center", { required: true })} />
         </label>
+        {errors.center && <p>This field is required</p>}
         <label>
             Maximum Distance:
-            <input type="number" value={maxDistance} step="any" min="0" name="max-distance" placeholder='distance'
-                list={id + "-distances"} onChange={handleMaxDistanceChange}>  </input>
+            <input type="number" step="any" min="0" name="max-distance" placeholder='distance'
+                list={id + "-distances"} {...register("distance", { required: true, min: 0 })} />
         </label>
         <datalist id={id + "-distances"}>
             <option value="1">1</option>
@@ -62,27 +48,31 @@ function SearchInput(props) {
             <option value="10">10</option>
             <option value="100">10</option>
         </datalist>
+        {errors.distance && <p>This field is required</p>}
         <label>
             Unit:
-            <select value={unit} onChange={handleUnitChange} name="unit">
+            <select defaultValue="km" name="unit" {...register("unit", { required: true })}>
                 <option value="m">m</option>
                 <option value="km">km</option>
             </select>
         </label>
+        {errors.unit && <p>This field is required</p>}
 
-        {
-            columns.length > 0 && (
-                <label>
-                    Address Column:
-                    <select value={addressColumn} onChange={handleColumnChange} name="address-column">
-                        {
-                            columns.map((c) => (<option value={c}>{c}</option>))
-                        }
 
-                    </select>
-                </label>)
-        }
-        <input type="submit">Search</input>
+
+        <label>
+            Address Column:
+            <select name="address-column" {...register("addressColumn", { required: true })}>
+                {
+                    columns.length > 0 && columns.map((c) => (<option value={c} key={c.toString()}>{c}</option>))
+                }
+
+            </select>
+        </label>
+        {errors.addressColumn && <p>This field is required</p>}
+
+
+        <input type="submit" />
 
     </form >);
 }
