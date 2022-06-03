@@ -1,6 +1,7 @@
-import React, { useState, useId } from 'react';
+import React, { useCallback, useMemo, useState, useId } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useForm } from "react-hook-form";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 function FileInput(props) {
 
@@ -78,7 +79,33 @@ function TableSample(props) {
 
 }
 
+const MAPBOX_TOKEN = '';
+
 function Map(props) {
+    const [map, setMap] = useState(null);
+    const center = props.center;
+
+    const displayMap = useMemo(
+        () => (
+            <MapContainer
+                center={center}
+                zoom={13}
+                scrollWheelZoom={false}
+                ref={setMap}>
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+            </MapContainer>
+        ),
+        [],
+    )
+    return (
+        <div>
+            {displayMap}
+        </div>
+    )
+
 
 }
 
@@ -156,9 +183,9 @@ function App(props) {
         </h1>
         <FileInput onFileUpload={handleFileUpload} />
         <SearchInput columns={columns} onSearch={handleSearch} />
-        {isFile && <TableSample tableSample={tableSample} />}
+        {isFile && <TableSample tableSample={...tableSample} />}
         { }
-        <Map searchOutput={searchOutput} />
+        <Map searchOutput={...searchOutput} />
 
 
     </div >);
