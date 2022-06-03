@@ -4,8 +4,14 @@ import ReactDOM from 'react-dom/client';
 
 function FileInput(props) {
 
+    function handleChange(event) {
+        props.onFileUpload(event.target.files[0]);
+    }
     return (<div class="file-input">
-        <input type="file"></input>
+        <label>
+            Upload File:
+            <input type="file" onChange={handleChange} onClick={(e) => (e.target.value = null)}></input>
+        </label>
     </div>);
 }
 
@@ -42,11 +48,11 @@ function SearchInput(props) {
     return (<form class="search-input" onSubmit={handleSubmit}>
         <label>
             Center Address:
-            <input type="text" value={center} name="center-address" onChange={handleCenter}>  </input>
+            <input type="text" value={center} name="center-address" onChange={handleCenter} placeholder="Center Address">  </input>
         </label>
         <label>
             Maximum Distance:
-            <input type="number" value={maxDistance} step="any" min="0" name="max-distance"
+            <input type="number" value={maxDistance} step="any" min="0" name="max-distance" placeholder='distance'
                 list={id + "-distances"} onChange={handleMaxDistanceChange}>  </input>
         </label>
         <datalist id={id + "-distances"}>
@@ -81,15 +87,51 @@ function SearchInput(props) {
     </form >);
 }
 
+function TableSample(props) {
+
+}
 
 function App(props) {
+    [isFile, setisFile] = useState(false);
+
+    let columns = null;
+    let table_sample = null;
+
+    function handlejsonTable(json) {
+        columns = json["columns"];
+
+    }
+
+
+    function handleFileUpload(fileUpload) {
+
+        const formData = new FormData();
+        formData.append("file", fileUpload);
+        const fetchPromise = fetch("", {
+            method: "POST",
+            body: formData,
+        });
+        fetchPromise.then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+        })
+            .then(json => { handlejsonTable(json); }).catch(error => {
+                console.error(`Could not receive file parse after upload: ${error}`);
+            });
+
+    }
+
     return (<div class="content">
         <h1>
             App for realtors to plan day travel
         </h1>
-        <FileInput />
+        <FileInput onFileUpload={handleFileUpload} />
+        <SearchInput />
+        {isFile && <TableSample />}
 
-    </div>);
+    </div >);
 }
 const container = ReactDOM.createRoot(document.getElementById("app"));
 container.render();
