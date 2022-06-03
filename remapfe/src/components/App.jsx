@@ -58,8 +58,6 @@ function SearchInput(props) {
         </label>
         {errors.unit && <p>This field is required</p>}
 
-
-
         <label>
             Address Column:
             <select name="address-column" {...register("addressColumn", { required: true })}>
@@ -70,7 +68,6 @@ function SearchInput(props) {
             </select>
         </label>
         {errors.addressColumn && <p>This field is required</p>}
-
 
         <input type="submit" />
 
@@ -101,9 +98,7 @@ function App(props) {
         catch (error) {
             throw new Error("Could not load the sample");
         }
-
     }
-
 
     function handleFileUpload(fileUpload) {
 
@@ -125,7 +120,6 @@ function App(props) {
             });
 
     }
-
 
     function handlejsonSearch(json) {
         try {
