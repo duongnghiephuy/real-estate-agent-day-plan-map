@@ -27,7 +27,7 @@ function SearchInput(props) {
 
 
     function onSubmit(data) {
-        console.log(data);
+        props.onSearch(data);
     }
 
     return (<form class="search-input" onSubmit={handleSubmit(onSubmit)}>
@@ -81,14 +81,26 @@ function TableSample(props) {
 
 }
 
+function Map(props) {
+
+}
+
+
 function App(props) {
     [isFile, setisFile] = useState(false);
+    [tableSample, settableSample] = useState(null);
+    [searchOutput, setsearchOutput] = useState(null);
 
-    let columns = null;
-    let table_sample = null;
 
     function handlejsonTable(json) {
-        columns = json["columns"];
+        try {
+            const newtableSample = { "columns": json["columns"], "data": json["data"] };
+            settableSample(newtableSample);
+            setisFile(true);
+        }
+        catch (error) {
+            throw new Error("Could not load the sample");
+        }
 
     }
 
@@ -109,8 +121,39 @@ function App(props) {
         })
             .then(json => { handlejsonTable(json); }).catch(error => {
                 console.error(`Could not receive file parse after upload: ${error}`);
+                setisFile(false);
             });
 
+    }
+
+
+    function handlejsonSearch(json) {
+        try {
+            const newsearchOuput = { "outputURL": json["outputURL"], "locations": json["locations"], "center": json["center"] };
+            setsearchOutput(newsearchOuput);
+        }
+        catch (error) {
+            throw new Error("Could not get the search result");
+        }
+
+
+    }
+
+    function handleSearch(data) {
+        const formData = new FormData();
+        formData.append("data", data);
+        const fetchPromise = fetch("", {
+            method: "POST",
+            body: formData,
+        });
+        fetchPromise.then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+        }).then(json => { handlejsonSearch(json); }).catch(error => {
+            console.error(`Could not receive search output: ${error}`);
+        });
     }
 
     return (<div class="content">
@@ -118,8 +161,11 @@ function App(props) {
             App for realtors to plan day travel
         </h1>
         <FileInput onFileUpload={handleFileUpload} />
-        <SearchInput />
-        {isFile && <TableSample />}
+        <SearchInput columns={columns} onSearch={handleSearch} />
+        {isFile && <TableSample tableSample={tableSample} />}
+        { }
+        <Map searchOutput={searchOutput} />
+
 
     </div >);
 }
