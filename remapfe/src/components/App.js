@@ -183,7 +183,7 @@ function App(props) {
 
     function handlejsonTable(json) {
         try {
-            const newtableSample = { "columns": json["columns"], "data": json["data"] };
+            const newtableSample = { columns: json["columns"], data: json["data"] };
             settableSample(newtableSample);
             setisFile(true);
         }
@@ -215,7 +215,7 @@ function App(props) {
 
     function handlejsonSearch(json) {
         try {
-            const newsearchOuput = { "outputURL": json["outputURL"], "locations": json["locations"], "center": json["center"] };
+            const newsearchOuput = { outputURL: json["outputURL"], locations: json["locations"], center: json["center"] };
             setsearchOutput(newsearchOuput);
         }
         catch (error) {
@@ -226,11 +226,11 @@ function App(props) {
     }
 
     function handleSearch(data) {
-        const formData = new FormData();
-        formData.append("data", data);
+
         const fetchPromise = fetch("", {
             method: "POST",
-            body: formData,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
         });
         fetchPromise.then(response => {
             if (!response.ok) {
