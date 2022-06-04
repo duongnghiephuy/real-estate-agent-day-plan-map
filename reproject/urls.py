@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from remapbe.views import front, note, note_detail
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("remapfe.urls")),
+    path("notes/", note, name="note"),
+    path("notes/<int:pk>/", note_detail, name="detail"),
 ]
