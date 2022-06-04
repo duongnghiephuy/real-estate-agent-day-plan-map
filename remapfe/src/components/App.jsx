@@ -1,7 +1,15 @@
-import React, { useCallback, useMemo, useState, useId } from 'react';
+import React, { useCallback, useMemo, useState, useId, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useForm } from "react-hook-form";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import {
+    Center, Container, VStack, Heading, Text,
+    FormControl, FormLabel, Input, Button, Select,
+    NumberInput, FormErrorMessage, VisuallyHidden, Flex,
+    NumberInputField, Table,
+    Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer,
+} from "@chakra-ui/react";
+
 
 function FileInput(props) {
 
@@ -31,64 +39,98 @@ function SearchInput(props) {
         props.onSearch(data);
     }
 
-    return (<form class="search-input" onSubmit={handleSubmit(onSubmit)}>
-        <label>
-            Center Address:
-            <input type="text" name="center" placeholder="Center Address" {...register("center", { required: true })} />
-        </label>
-        {errors.center && <p>This field is required</p>}
-        <label>
-            Maximum Distance:
-            <input type="number" step="any" min="0" name="max-distance" placeholder='distance'
-                list={id + "-distances"} {...register("distance", { required: true, min: 0 })} />
-        </label>
-        <datalist id={id + "-distances"}>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="100">10</option>
-        </datalist>
-        {errors.distance && <p>This field is required</p>}
-        <label>
-            Unit:
-            <select defaultValue="km" name="unit" {...register("unit", { required: true })}>
-                <option value="m">m</option>
-                <option value="km">km</option>
-            </select>
-        </label>
-        {errors.unit && <p>This field is required</p>}
+    return (<VStack>
+        <form class="search-input" onSubmit={handleSubmit(onSubmit)}>
+            <FormControl>
+                <Flex p={0} wrap="wrap">
+                    <VisuallyHidden>
+                        <FormLabel htmlFor={id + "-center"}>Center Address</FormLabel>
+                    </VisuallyHidden>
+                    <Input id={id + "-center"} name="center" placeholder="Center Address" {...register("center", { required: "This is required" })} />
+                    <FormErrorMessage>
+                        {errors.center && errors.center.message}
+                    </FormErrorMessage>
 
-        <label>
-            Address Column:
-            <select name="address-column" {...register("addressColumn", { required: true })}>
-                {
-                    columns.length > 0 && columns.map((c) => (<option value={c} key={c.toString()}>{c}</option>))
-                }
+                    <FormLabel htmlFor={id + "-maxdistance"}>Max Distance</FormLabel>
+                    <NumberInput min={0} step="any" id={id + "-maxdistance"} name="maxdistance" {...register("distance", { min: { value: 0, message: "Min value is 0" } })}>
+                        <NumberInputField placeholder="Max Distance" />
+                    </NumberInput>
+                    <FormErrorMessage>
+                        {errors.distance && errors.distance.message}
+                    </FormErrorMessage>
 
-            </select>
-        </label>
-        {errors.addressColumn && <p>This field is required</p>}
+                    <VisuallyHidden>
+                        <FormLabel htmlFor={id + "-unit"}>unit</FormLabel>
+                    </VisuallyHidden>
+                    <Select defaultValue="km" placeholder='Unit' id={id + "-unit"} name="unit" {...register("unit", { required: "This is required" })}>
+                        <option value="m">m</option>
+                        <option value="km">km</option>
+                    </Select>
+                    <FormErrorMessage>
+                        {errors.unit && errors.unit.message}
+                    </FormErrorMessage>
+                </Flex >
 
-        <input type="submit" />
+                <FormLabel htmlFor={id + "-addrcolumn"}>Address Column</FormLabel>
 
-    </form >);
+                <Select id={id + "-addrcolumn"} name="addresscolumn" placeholder='Address Column' {...register("addressColumn", { required: "This field is required" })}>
+                    {
+                        columns.length > 0 && columns.map((c) => (<option value={c} key={c.toString()}>{c}</option>))
+                    }
+                </Select>
+                <FormErrorMessage>
+                    {errors.addressColumn && errors.addressColumn.message}
+                </FormErrorMessage>
+
+            </FormControl>
+            <Button type="submit">Search</Button>
+        </form >
+    </VStack>);
 }
 
 function TableSample(props) {
+    return (
+        < TableContainer >
+            <Table>
+                <TableCaption>
+                    Your file sample
+                </TableCaption>
+                <Thead>
+                    <Tr>
+                        {props.columns.map((c) => (<Th>{c}</Th>))}
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {props.data.map((row) => {
+                        return <Tr>{row.map((cell) => (<Th>{cell}</Th>))}</Tr>;
+                    })}
+                </Tbody>
+            </Table>
+
+        </TableContainer >);
 
 }
 
-const MAPBOX_TOKEN = '';
+function LocationMarkers(props) {
+    return props.locations.map((loc) => (
+        <Marker position={loc}>
+            <Popup>
+                Property within Max Distance
+            </Popup>
+        </Marker>));
+
+}
 
 function Map(props) {
     const [map, setMap] = useState(null);
-    const center = props.center;
 
+    useEffect(() => {
+        map.setView(props.center, 13);
+    }, [map, props.center, props.locations]);
     const displayMap = useMemo(
         () => (
             <MapContainer
-                center={center}
+                center={props.center}
                 zoom={13}
                 scrollWheelZoom={false}
                 ref={setMap}>
@@ -96,6 +138,15 @@ function Map(props) {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+
+                <LocationMarkers locations={props.locations} />
+
+                <Marker position={props.center}>
+                    <Popup>
+                        Center
+                    </Popup>
+                </Marker>
+
             </MapContainer>
         ),
         [],
@@ -177,18 +228,16 @@ function App(props) {
         });
     }
 
-    return (<div class="content">
-        <h1>
-            App for realtors to plan day travel
-        </h1>
-        <FileInput onFileUpload={handleFileUpload} />
-        <SearchInput columns={columns} onSearch={handleSearch} />
-        {isFile && <TableSample tableSample={...tableSample} />}
-        { }
-        <Map searchOutput={...searchOutput} />
+    return (<Container p={0}>
+        <VStack w="full" h="full" p={2} spacing={5}>
 
-
-    </div >);
+            <Heading>
+                App for realtors to plan day travel
+            </Heading>
+            <FileInput onFileUpload={handleFileUpload} />
+            <SearchInput columns={columns} onSearch={handleSearch} />
+            {isFile && <TableSample tableSample={...tableSample} />}
+            {searchOutput ? <Map searchOutput={...searchOutput} /> : null}
+        </VStack>
+    </Container >);
 }
-const container = ReactDOM.createRoot(document.getElementById("app"));
-container.render();
