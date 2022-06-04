@@ -250,6 +250,7 @@ function App(props) {
             </Heading>
             <FileInput onFileUpload={handleFileUpload} />
             <SearchInput columns={tableSample.columns} onSearch={handleSearch} />
+            {searchOutput && <a href={searchOutput.outputURL} download>searchresult</a>}
             {isFile && <TableSample {...tableSample} />}
             {searchOutput ? <Map {...searchOutput} /> : null}
         </VStack>
