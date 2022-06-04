@@ -12,3 +12,6 @@ Real estate agents often have to go to inspect a bunch of properties a day. This
 +-- remapfe: react app to provide front end
 
 ```
+## Dependencies
+
+React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
