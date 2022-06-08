@@ -49,16 +49,19 @@ class HandleFileUpload(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
+        print("here")
+
         uploadfile = request.data["file"]
-        try:
-            df = pd.read_excel(
-                uploadfile,
-            )
-        except:
-            return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+
+        df = pd.read_excel(uploadfile)
+        """ except Exception as e:
+            print("Fuck")
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST) """
         columns = df.columns.to_list()
-        sample_length = min(5, df.shape[0])
-        data = df.iloc[:sample_length, :]
+        sample_length = min(3, df.shape[0])
+        df = df.fillna("")
+        data = df.iloc[:sample_length, :].values.tolist()
+        print(data)
         return Response(
             data={"columns": columns, "data": data}, status=status.HTTP_200_OK
         )

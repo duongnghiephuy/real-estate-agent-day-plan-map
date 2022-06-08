@@ -196,9 +196,8 @@ function App(props) {
 
         const formData = new FormData();
         formData.append("file", fileUpload);
-        const fetchPromise = fetch("", {
+        const fetchPromise = fetch("uploadfile", {
             method: "POST",
-            headers: { 'Content-Type': 'multipart/form-data' },
             body: formData,
         });
         fetchPromise.then(response => {
@@ -252,6 +251,7 @@ function App(props) {
             <FileInput onFileUpload={handleFileUpload} />
             <SearchInput columns={tableSample.columns} onSearch={handleSearch} />
             {searchOutput && <a href={searchOutput.outputURL} download>searchresult</a>}
+            {!isFile && <p>File was not uploaded or not parsed due to file format</p>}
             {isFile && <TableSample {...tableSample} />}
             {searchOutput ? <Map {...searchOutput} /> : null}
         </VStack>
