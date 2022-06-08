@@ -54,6 +54,7 @@ class HandleFileUpload(APIView):
         uploadfile = request.data["file"]
 
         df = pd.read_excel(uploadfile)
+        print(df)
         """ except Exception as e:
             print("Fuck")
             return Response(data=None, status=status.HTTP_400_BAD_REQUEST) """
@@ -61,7 +62,7 @@ class HandleFileUpload(APIView):
         sample_length = min(3, df.shape[0])
         df = df.fillna("")
         data = df.iloc[:sample_length, :].values.tolist()
-        print(data)
+
         return Response(
             data={"columns": columns, "data": data}, status=status.HTTP_200_OK
         )
