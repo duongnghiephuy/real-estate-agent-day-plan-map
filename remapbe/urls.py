@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import note, note_detail, HandleFileUpload, Search
+from .views import HandleFileUpload, Search
 from django.conf import settings
 from django.conf.urls.static import static
 
