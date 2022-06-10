@@ -18,7 +18,7 @@ The approach of using mini React app in Django Template with webpack and babel, 
 Django session authentication easily while compiling only the necessary JavaScript.  
 
 ```
-+-- reproject: initial django app containing settings.py
++-- reproject: initial django app containing global settings.py
 +-- remapbe: django app to provide REST API
 |   +-- urls.py: routing for REST API
 |   +-- views.py: REST API
