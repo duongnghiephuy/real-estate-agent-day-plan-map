@@ -31,6 +31,10 @@ Django session authentication easily while compiling only the necessary JavaScri
 
 ## Demo
 
+
+https://user-images.githubusercontent.com/55075721/173093913-5e34db26-5ec0-45c9-9722-1d75d37a9970.mp4
+
+
 ## Dependencies
 
 React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
