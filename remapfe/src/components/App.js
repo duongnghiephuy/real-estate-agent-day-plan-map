@@ -153,7 +153,7 @@ function Map(props) {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                <LocationMarkers locations={props.locations} />
+                {props.locations.length > 0 && <LocationMarkers locations={props.locations} />}
 
                 <Marker position={props.center}>
                     <Popup>
@@ -179,6 +179,7 @@ function App(props) {
     const [isFile, setisFile] = useState(false);
     const [tableSample, settableSample] = useState({ "columns": null });
     const [searchOutput, setsearchOutput] = useState(null);
+    const [userFile, setUserFile] = useState(null);
 
 
     function handlejsonTable(json) {
@@ -204,6 +205,7 @@ function App(props) {
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
             }
+            setUserFile(fileUpload);
             return response.json();
         })
             .then(json => { handlejsonTable(json); }).catch(error => {
@@ -226,11 +228,14 @@ function App(props) {
     }
 
     function handleSearch(data) {
-
-        const fetchPromise = fetch("", {
+        const formData = new FormData();
+        formData.append("file", userFile);
+        Object.keys(data).forEach(key => {
+            formData.append(key, data[key]);
+        });
+        const fetchPromise = fetch("search", {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: formData,
         });
         fetchPromise.then(response => {
             if (!response.ok) {

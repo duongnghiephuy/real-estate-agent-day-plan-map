@@ -7,14 +7,10 @@ from rest_framework.parsers import MultiPartParser
 from .serializers import NoteSerializer
 from .models import Notes
 import pandas as pd
+from geopy.geocoders import Nominatim
+from geopy import distance
 
 # Create your views here.
-
-
-def front(request):
-    context = {}
-
-    return render(request, "index.html", context)
 
 
 @api_view(["GET", "POST"])
@@ -49,8 +45,6 @@ class HandleFileUpload(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
-        print("here")
-
         uploadfile = request.data["file"]
         try:
             df = pd.read_excel(uploadfile)
@@ -63,4 +57,57 @@ class HandleFileUpload(APIView):
 
         return Response(
             data={"columns": columns, "data": data}, status=status.HTTP_200_OK
+        )
+
+
+# Currently there is only km and m
+def resolve_to_km(value, unit):
+    if unit == "m":
+        return value / 1000
+    else:
+        return value
+
+
+class Search(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        geolocator = Nominatim(user_agent="realtor-day-plan")
+
+        userfile = request.data["file"]
+        try:
+            df = pd.read_excel(userfile)
+        except:
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            geodecode_res = geolocator.geocode(request.data["center"])
+            if not geodecode_res:
+                return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+            center = [geodecode_res.latitude, geodecode_res.longitude]
+        except:
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
+        max_distance = resolve_to_km(
+            float(request.data["distance"]), request.data["unit"]
+        )
+
+        res = []
+        try:
+            addresses = df[request.data["addressColumn"]].tolist()
+            for address in addresses:
+                geodecode_res = geolocator.geocode(str(address))
+                distance_to_center = distance.distance(
+                    (geodecode_res.latitude, geodecode_res.longitude),
+                    tuple(center),
+                ).km
+                if distance_to_center <= max_distance:
+                    res.append([geodecode_res.latitude, geodecode_res.longitude])
+
+        except Exception as e:
+            print(e)
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            data={"center": center, "locations": res}, status=status.HTTP_200_OK
         )
