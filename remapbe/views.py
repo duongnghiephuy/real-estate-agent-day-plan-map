@@ -46,7 +46,7 @@ class HandleFileUpload(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
-
+        print(request.session.session_key)
         uploadfile = request.data["file"]
         try:
             df = pd.read_excel(uploadfile)
