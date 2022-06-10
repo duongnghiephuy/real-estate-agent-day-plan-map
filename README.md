@@ -28,6 +28,9 @@ Django session authentication easily while compiling only the necessary JavaScri
 |   +-- views.py: index view to index.html
 |   +-- templates/index.html: template to load index.js/react into
 ```
+
+## Demo
+
 ## Dependencies
 
 React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
