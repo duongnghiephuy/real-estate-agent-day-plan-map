@@ -9,6 +9,7 @@ from .models import Notes
 import pandas as pd
 from geopy.geocoders import Nominatim
 from geopy import distance
+from django.core.files import File
 
 # Create your views here.
 
@@ -45,6 +46,7 @@ class HandleFileUpload(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
+
         uploadfile = request.data["file"]
         try:
             df = pd.read_excel(uploadfile)
@@ -68,6 +70,23 @@ def resolve_to_km(value, unit):
         return value
 
 
+# Add coordinate, distance columns to df
+def add_geo(geolocator, address_column, row, center):
+    try:
+        coor = geolocator.geocode(str(row[address_column]))
+        row["coordinate"] = [coor.latitude, coor.longitude]
+    except:
+        coor = None
+    if coor:
+        row["distance"] = distance.distance(
+            (coor.latitude, coor.longitude),
+            tuple(center),
+        ).km
+    else:
+        row["distance"] = float("inf")
+    return row
+
+
 class Search(APIView):
     parser_classes = [MultiPartParser]
 
@@ -88,26 +107,39 @@ class Search(APIView):
         except:
             return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
 
+        # convert to km
         max_distance = resolve_to_km(
             float(request.data["distance"]), request.data["unit"]
         )
 
-        res = []
-        try:
-            addresses = df[request.data["addressColumn"]].tolist()
-            for address in addresses:
-                geodecode_res = geolocator.geocode(str(address))
-                distance_to_center = distance.distance(
-                    (geodecode_res.latitude, geodecode_res.longitude),
-                    tuple(center),
-                ).km
-                if distance_to_center <= max_distance:
-                    res.append([geodecode_res.latitude, geodecode_res.longitude])
+        address_column = request.data["addressColumn"]
 
-        except Exception as e:
-            print(e)
-            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+        # New df with coordinate, distance columns
+        df = df.apply(
+            lambda row: add_geo(geolocator, address_column, row, center),
+            axis="columns",
+        )
+
+        # Search within max distance
+        df = df.loc[df["distance"] <= max_distance]
+
+        # Convert result to dict for JSON conversion later
+        res = df[[address_column, "coordinate"]].copy()
+        res.columns = ["address", "coordinate"]
+        res = res.to_dict("records")
+
+        # Df to save for serving result file
+        df = df.iloc[:, :-2]
+        filename = "media/searchresfile" + str(request.session.session_key) + ".csv"
+        with open(filename, "wb") as f:
+            searchresfile = File(f)
+            df.to_csv(searchresfile)
 
         return Response(
-            data={"center": center, "locations": res}, status=status.HTTP_200_OK
+            data={
+                "center": center,
+                "locations": res,
+                "outputURL": filename,
+            },
+            status=status.HTTP_200_OK,
         )

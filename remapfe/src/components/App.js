@@ -111,12 +111,12 @@ function TableSample(props) {
                 </TableCaption>
                 <Thead>
                     <Tr>
-                        {props.columns.map((c) => (<Th>{c}</Th>))}
+                        {props.columns.map((c) => (<Th key={c.toString()}>{c}</Th>))}
                     </Tr>
                 </Thead>
                 <Tbody>
                     {props.data.map((row) => {
-                        return <Tr>{row.map((cell) => (<Th>{cell}</Th>))}</Tr>;
+                        return <Tr>{row.map((cell) => (<Th key={cell.toString()}>{cell}</Th>))}</Tr>;
                     })}
                 </Tbody>
             </Table>
@@ -127,9 +127,9 @@ function TableSample(props) {
 
 function LocationMarkers(props) {
     return props.locations.map((loc) => (
-        <Marker position={loc}>
+        <Marker position={loc.coordinate}>
             <Popup>
-                Property within Max Distance
+                {loc.address}
             </Popup>
         </Marker>));
 
@@ -138,12 +138,10 @@ function LocationMarkers(props) {
 function Map(props) {
     const [map, setMap] = useState(null);
 
-    useEffect(() => {
-        map.setView(props.center, 13);
-    }, [map, props.center, props.locations]);
-    const displayMap = useMemo(
-        () => (
-            <MapContainer
+
+    return (
+        <div>
+            <MapContainer className='leaflet-container'
                 center={props.center}
                 zoom={13}
                 scrollWheelZoom={false}
@@ -162,12 +160,7 @@ function Map(props) {
                 </Marker>
 
             </MapContainer>
-        ),
-        [],
-    )
-    return (
-        <div>
-            {displayMap}
+
         </div>
     )
 
@@ -199,6 +192,7 @@ function App(props) {
         formData.append("file", fileUpload);
         const fetchPromise = fetch("uploadfile", {
             method: "POST",
+            credentials: "include",
             body: formData,
         });
         fetchPromise.then(response => {
@@ -235,6 +229,7 @@ function App(props) {
         });
         const fetchPromise = fetch("search", {
             method: "POST",
+            credentials: "include",
             body: formData,
         });
         fetchPromise.then(response => {
@@ -255,10 +250,10 @@ function App(props) {
             </Heading>
             <FileInput onFileUpload={handleFileUpload} />
             <SearchInput columns={tableSample.columns} onSearch={handleSearch} />
-            {searchOutput && <a href={searchOutput.outputURL} download>searchresult</a>}
+            {searchOutput && <a href={searchOutput.outputURL} download>searchresult.csv</a>}
             {!isFile && <p>File was not uploaded or not parsed due to file format</p>}
             {isFile && <TableSample {...tableSample} />}
-            {searchOutput ? <Map {...searchOutput} /> : null}
+            {searchOutput && <Map {...searchOutput} />}
         </VStack>
     </Container >);
 }
