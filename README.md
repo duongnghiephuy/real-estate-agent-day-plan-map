@@ -31,3 +31,5 @@ Django session authentication easily while compiling only the necessary JavaScri
 ## Dependencies
 
 React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
+
+Pandas to process excel and write csv resutl. Geopy for geocode and distance calculation from latitude and longitude. 
