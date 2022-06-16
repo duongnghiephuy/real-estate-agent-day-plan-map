@@ -37,6 +37,6 @@ https://user-images.githubusercontent.com/55075721/173093913-5e34db26-5ec0-45c9-
 
 ## Dependencies
 
-React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
+React frontend: React-hook-form for form validation. Charka UI for fast and responsive styling. React-leaflet for map. 
 
-Pandas to process excel and write csv resutl. Geopy for geocode and distance calculation from latitude and longitude. 
+Python, Django backend: Pandas to process excel and write csv resutl. Geopy for geocode and distance calculation from latitude and longitude. 
