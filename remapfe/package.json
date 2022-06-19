@@ -5,17 +5,28 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development --watch --entry ./src/index.js --output-path ./static/remapfe",
-    "build": "webpack --mode production --entry ./src/index.js --output-path ./static/remapfe"
+    "build": "webpack --mode production --entry ./src/index.js --output-path ./static/remapfe",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.18.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.2",
     "@babel/plugin-transform-runtime": "^7.18.2",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
+    "@testing-library/react": "^13.3.0",
+    "babel-jest": "^28.1.1",
     "babel-loader": "^8.2.5",
+    "cross-env": "^7.0.3",
+    "jest": "^28.1.1",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2"
   },
