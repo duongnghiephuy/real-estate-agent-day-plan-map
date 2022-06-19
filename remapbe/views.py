@@ -113,7 +113,7 @@ class Search(APIView):
         df = df.loc[df["distance"] <= max_distance]
 
         # Convert result to dict for JSON conversion later
-        if "coordinate" in res.columns:
+        if "coordinate" in df.columns:
             res = df[[address_column, "coordinate"]].copy()
             res.columns = ["address", "coordinate"]
             res = res.to_dict("records")

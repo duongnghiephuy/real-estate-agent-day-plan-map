@@ -6,6 +6,19 @@ import io
 import pandas as pd
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
+def generate_excel(df):
+    tempfile = io.BytesIO()
+    df.to_excel(tempfile, index=False)
+    tempfile.seek(0)
+    excel_file = SimpleUploadedFile(
+        "realestate.xlsx",
+        content=tempfile.read(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    return excel_file
+
+
 # Create your tests here.
 class FileUploadTests(APITestCase):
 
@@ -16,15 +29,8 @@ class FileUploadTests(APITestCase):
         columns = ["Id", "Address"]
         val = [[1, "123 Street A"], [2, "456 StreetB"]]
         df = pd.DataFrame(val, columns=columns)
-        tempfile = io.BytesIO()
-        df.to_excel(tempfile, index=False)
-        tempfile.seek(0)
 
-        excel_upload_file = SimpleUploadedFile(
-            "realestate.xlsx",
-            content=tempfile.read(),
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+        excel_upload_file = generate_excel(df)
 
         response = self.client.post(
             reverse("remapbe:uploadfile"), {"file": excel_upload_file}
@@ -44,3 +50,23 @@ class FileUploadTests(APITestCase):
         )
         response = self.client.post(reverse("remapbe:uploadfile"), {"file": video})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class SearchTests(APITestCase):
+    def test_search(self):
+        columns = ["Thông Số", "Giá"]
+        val = [["369 ngõ Quỳnh, Hà Nội", "5"], ["121 Kim Ngưu Hà Nội", "5"]]
+        df = pd.DataFrame(val, columns=columns)
+        excel_upload_file = generate_excel(df)
+
+        response = self.client.post(
+            reverse("remapbe:search"),
+            {
+                "file": excel_upload_file,
+                "center": "254 Minh Khai Hà Nội",
+                "addressColumn": "Thông Số",
+                "distance": 5,
+                "unit": "km",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
