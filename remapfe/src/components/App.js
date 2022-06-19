@@ -258,4 +258,4 @@ function App(props) {
     </Container >);
 }
 
-export default App;
+export { FileInput, App };
