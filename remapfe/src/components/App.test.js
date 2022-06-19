@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { FileInput, App } from './App';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom';
@@ -14,7 +14,11 @@ describe("File input", () => {
 
         expect(screen.getByLabelText(/Upload File:/)).toBeInTheDocument();
         const input = screen.getByLabelText(/Upload File:/);
-        userEvent.upload(input, file, [{ clickInit: true, changeInit: true }]);
+        fireEvent.click(input);
+        Object.defineProperty(input, "files", {
+            value: [file]
+        });
+        fireEvent.change(input);
         expect(input.files).toHaveLength(1);
         expect(onUpload).toHaveBeenCalledTimes(1);
     });
