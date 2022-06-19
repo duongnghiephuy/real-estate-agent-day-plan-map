@@ -8,11 +8,6 @@
     "build": "webpack --mode production --entry ./src/index.js --output-path ./static/remapfe",
     "test": "jest"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.[t|j]sx?$": "babel-jest"
-    }
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -36,6 +31,7 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "framer-motion": "^6.3.10",
+    "jest-environment-jsdom": "^28.1.1",
     "leaflet": "^1.8.0",
     "react-hook-form": "^7.31.3",
     "react-leaflet": "^4.0.0"
