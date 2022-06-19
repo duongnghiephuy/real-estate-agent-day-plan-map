@@ -1,3 +1,4 @@
+from operator import index
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -17,9 +18,13 @@ class HandleFileUpload(APIView):
 
     def post(self, request):
         print(request.session.session_key)
-        uploadfile = request.data["file"]
         try:
-            df = pd.read_excel(uploadfile)
+            uploadfile = request.data["file"]
+        except:
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            df = pd.read_excel(uploadfile, index_col=None)
         except:
             return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
         columns = df.columns.to_list()
@@ -57,13 +62,27 @@ def add_geo(geolocator, address_column, row, center):
     return row
 
 
+# Write df to file name with unique session key
+def write_df_filename_session_key(df, session_key, extension):
+    filename = "media/searchresfile" + str(session_key) + ".{}".format(extension)
+    with open(filename, "wb") as f:
+        searchresfile = File(f)
+        if str(extension).strip() == "csv":
+            df.to_csv(searchresfile)
+    return filename
+
+
 class Search(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
         geolocator = Nominatim(user_agent="realtor-day-plan")
 
-        userfile = request.data["file"]
+        try:
+            userfile = request.data["file"]
+        except:
+            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             df = pd.read_excel(userfile)
         except:
@@ -77,12 +96,12 @@ class Search(APIView):
         except:
             return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
 
+        address_column = request.data.get("addressColumn", 0)
+
         # convert to km
         max_distance = resolve_to_km(
             float(request.data["distance"]), request.data["unit"]
         )
-
-        address_column = request.data["addressColumn"]
 
         # New df with coordinate, distance columns
         df = df.apply(
@@ -94,16 +113,18 @@ class Search(APIView):
         df = df.loc[df["distance"] <= max_distance]
 
         # Convert result to dict for JSON conversion later
-        res = df[[address_column, "coordinate"]].copy()
-        res.columns = ["address", "coordinate"]
-        res = res.to_dict("records")
+        if "coordinate" in df.columns:
+            res = df[[address_column, "coordinate"]].copy()
+            res.columns = ["address", "coordinate"]
+            res = res.to_dict("records")
+        else:
+            res = []
 
         # Df to save for serving result file
         df = df.iloc[:, :-2]
-        filename = "media/searchresfile" + str(request.session.session_key) + ".csv"
-        with open(filename, "wb") as f:
-            searchresfile = File(f)
-            df.to_csv(searchresfile)
+
+        # Save file to csv with unique session_key
+        filename = write_df_filename_session_key(df, request.session.session_key, "csv")
 
         return Response(
             data={
