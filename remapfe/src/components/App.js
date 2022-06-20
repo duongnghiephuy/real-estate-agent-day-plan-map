@@ -116,7 +116,7 @@ function TableSample(props) {
                 </Thead>
                 <Tbody>
                     {props.data.map((row) => {
-                        return <Tr>{row.map((cell) => (<Th key={cell.toString()}>{cell}</Th>))}</Tr>;
+                        return <Tr key={row[0].toString()}>{row.map((cell) => (<Th key={cell.toString()}>{cell}</Th>))}</Tr>;
                     })}
                 </Tbody>
             </Table>
@@ -258,4 +258,4 @@ function App(props) {
     </Container >);
 }
 
-export default App;
+export { FileInput, App };

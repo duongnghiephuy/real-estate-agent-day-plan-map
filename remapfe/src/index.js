@@ -1,4 +1,4 @@
-import App from "./components/App";
+import { App } from "./components/App";
 import { ChakraProvider } from '@chakra-ui/react'
 import ReactDOM from 'react-dom/client';
 import React from 'react';
