@@ -25,6 +25,7 @@
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.3",
     "jest": "^28.1.1",
+    "jest-fetch-mock": "^3.0.3",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2"
   },
