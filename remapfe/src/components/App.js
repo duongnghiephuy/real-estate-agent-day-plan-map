@@ -190,12 +190,7 @@ function App(props) {
 
         const formData = new FormData();
         formData.append("file", fileUpload);
-        const fetchPromise = fetch("uploadfile", {
-            method: "POST",
-            credentials: "include",
-            headers: formData.getHeaders(),
-            body: formData,
-        });
+        const fetchPromise = axios.post("uploadfile", formData);
         fetchPromise.then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
