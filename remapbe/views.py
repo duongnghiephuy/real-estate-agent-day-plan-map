@@ -20,12 +20,18 @@ class HandleFileUpload(APIView):
         try:
             uploadfile = request.data["file"]
         except:
-            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                data={"error": "cannot find uploaded file"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             df = pd.read_excel(uploadfile, index_col=None)
         except:
-            return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                data={"error": "cannot read uploaded file"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         columns = df.columns.to_list()
         sample_length = min(3, df.shape[0])
         df = df.fillna("")
