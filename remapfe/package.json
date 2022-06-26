@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack --mode development --watch --entry ./src/index.js --output-path ./static/remapfe",
     "build": "webpack --mode production --entry ./src/index.js --output-path ./static/remapfe",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -44,5 +45,9 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "engines": {
+    "npm": "8.5.5",
+    "node": "16.15.0"
+  }
 }
