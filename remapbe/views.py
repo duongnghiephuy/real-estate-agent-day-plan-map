@@ -18,6 +18,8 @@ class HandleFileUpload(APIView):
     def post(self, request):
 
         try:
+            print(request)
+            print(request.data)
             uploadfile = request.data["file"]
         except:
             return Response(
