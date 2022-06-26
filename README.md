@@ -53,3 +53,9 @@ Python, Django backend: Pandas to process excel and write csv result. Geopy for 
 Backend: Django Rest Framework testing API 
 
 Frontend: Jest and React testing library
+
+## Demo production 
+
+https://realtor-day-travel-plan.herokuapp.com/
+
+It's missing the file download feature because of heroku. 
