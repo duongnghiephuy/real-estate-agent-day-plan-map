@@ -21,7 +21,8 @@ class HandleFileUpload(APIView):
             print(request)
             print(request.data)
             uploadfile = request.data["file"]
-        except:
+        except Exception as e:
+            print(e)
             return Response(
                 data={"error": "cannot find uploaded file"},
                 status=status.HTTP_400_BAD_REQUEST,
