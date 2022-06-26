@@ -133,13 +133,13 @@ class Search(APIView):
         df = df.iloc[:, :-2]
 
         # Save file to csv with unique session_key
-        filename = write_df_filename_session_key(df, request.session.session_key, "csv")
+        # filename = write_df_filename_session_key(df, request.session.session_key, "csv")
 
         return Response(
             data={
                 "center": center,
                 "locations": res,
-                "outputURL": filename,
+                "outputURL": "#",
             },
             status=status.HTTP_200_OK,
         )
