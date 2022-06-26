@@ -3,5 +3,4 @@ pandas==1.4.1
 geopy==2.2.0
 djangorestframework==3.13.1
 gunicorn
-psycopg2
 whitenoise

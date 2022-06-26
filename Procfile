@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn realtor-day-travel-plan.wsgi --log-file -
+web: gunicorn reproject.wsgi --log-file -
