@@ -4,3 +4,4 @@ geopy==2.2.0
 djangorestframework==3.13.1
 gunicorn
 whitenoise
+psycopg2
