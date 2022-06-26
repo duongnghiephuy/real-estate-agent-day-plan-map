@@ -6,6 +6,5 @@ gunicorn
 whitenoise
 psycopg2
 python-dotenv
-dotenv
 dj_database_url
 django_heroku
