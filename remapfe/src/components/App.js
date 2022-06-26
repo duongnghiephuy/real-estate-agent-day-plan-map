@@ -192,7 +192,9 @@ function App(props) {
         formData.append("file", fileUpload);
         const fetchPromise = fetch("uploadfile", {
             method: "POST",
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: {
+                'Content-Type': null
+            },
             credentials: "include",
             body: formData,
         });
