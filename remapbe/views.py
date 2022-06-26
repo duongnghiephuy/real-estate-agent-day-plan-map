@@ -16,7 +16,7 @@ class HandleFileUpload(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request):
-        print(request.session.session_key)
+
         try:
             uploadfile = request.data["file"]
         except:
