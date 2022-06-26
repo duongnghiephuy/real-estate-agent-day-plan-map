@@ -34,6 +34,13 @@ Django session authentication easily while compiling only the necessary JavaScri
 
 https://user-images.githubusercontent.com/55075721/173093913-5e34db26-5ec0-45c9-9722-1d75d37a9970.mp4
 
+## How to run 
+
+Clone the project and on terminal navigate to the folder with manage.py. 
+
+Run python manage.py runserver 
+
+(In some cases, it may be py -3 manage.py runserver)
 
 ## Dependencies
 
