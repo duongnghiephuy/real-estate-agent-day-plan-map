@@ -230,6 +230,7 @@ function App(props) {
         });
         const fetchPromise = fetch("search", {
             method: "POST",
+            headers: { 'Content-Type': 'multipart/form-data' },
             credentials: "include",
             body: formData,
         });
