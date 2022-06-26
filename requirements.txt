@@ -5,3 +5,7 @@ djangorestframework==3.13.1
 gunicorn
 whitenoise
 psycopg2
+python-dotenv
+dotenv
+dj_database_url
+django_heroku
