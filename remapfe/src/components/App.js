@@ -9,7 +9,7 @@ import {
     NumberInputField, Table, SimpleGrid,
     Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer, GridItem,
 } from "@chakra-ui/react";
-
+import axios from 'axios';
 
 function FileInput(props) {
 
@@ -192,10 +192,8 @@ function App(props) {
         formData.append("file", fileUpload);
         const fetchPromise = fetch("uploadfile", {
             method: "POST",
-            headers: {
-                'Content-Type': null
-            },
             credentials: "include",
+            headers: formData.getHeaders(),
             body: formData,
         });
         fetchPromise.then(response => {
@@ -232,7 +230,6 @@ function App(props) {
         });
         const fetchPromise = fetch("search", {
             method: "POST",
-            headers: { 'Content-Type': 'multipart/form-data' },
             credentials: "include",
             body: formData,
         });
