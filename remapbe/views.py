@@ -30,7 +30,8 @@ class HandleFileUpload(APIView):
 
         try:
             df = pd.read_excel(uploadfile, index_col=None)
-        except:
+        except Exception as e:
+            print(e)
             return Response(
                 data={"error": "cannot read uploaded file"},
                 status=status.HTTP_400_BAD_REQUEST,
