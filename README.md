@@ -34,6 +34,12 @@ Django session authentication easily while compiling only the necessary JavaScri
 
 https://user-images.githubusercontent.com/55075721/173093913-5e34db26-5ec0-45c9-9722-1d75d37a9970.mp4
 
+## Demo production 
+
+https://realtor-day-travel-plan.herokuapp.com/
+
+It's missing the file download feature because of heroku. 
+
 ## How to run 
 
 Clone the project and on terminal navigate to the folder with manage.py. 
@@ -54,8 +60,4 @@ Backend: Django Rest Framework testing API
 
 Frontend: Jest and React testing library
 
-## Demo production 
 
-https://realtor-day-travel-plan.herokuapp.com/
-
-It's missing the file download feature because of heroku. 
